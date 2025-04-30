@@ -3,6 +3,8 @@
 namespace App\Controller\Api;
 
 use App\DTO\Photo\PhotoRequestDTO;
+use App\Service\FileStorageService;
+use App\Service\PhotoRoomService;
 use App\Service\Validation\DtoValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +18,6 @@ final class UploadPhotoController extends AbstractController
     #[Route('/api/upload/photo', name: 'app_api_upload_photo', methods: ['POST'])]
     public function upload(
         Request            $request,
-        ValidatorInterface $validator,
         PhotoRoomService   $photoRoomService,
         FileStorageService $fileStorageService,
         DtoValidator       $dtoValidator
@@ -26,11 +27,11 @@ final class UploadPhotoController extends AbstractController
         $dtoValidator->validate($dto);
 
         try {
-            $retouchedImageBinary = $photoRoomService->retouchPhoto($dto->getPhoto());
-            $publicPath = $fileStorageService->save($retouchedImageBinary);
+            $retouchedImageBinary = $photoRoomService->retouchImage($dto->getPhoto());
+            $publicPath = $fileStorageService->saveImage($retouchedImageBinary);
 
             return $this->json([
-                'message' => 'Pohot uploaded and processed successfully.',
+                'message' => 'Photo uploaded and processed successfully.',
                 'path' => $publicPath
             ], Response::HTTP_OK);
         } catch (\Throwable $e) {
