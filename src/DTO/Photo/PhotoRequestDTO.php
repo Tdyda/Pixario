@@ -15,4 +15,19 @@ class PhotoRequestDTO
         mimeTypesMessage: "Please upload a valid JPEG or PNG image."
     )]
     public ?UploadedFile $photo = null;
+
+    public function __construct(?UploadedFile $photo = null)
+    {
+        $this->photo = $photo;
+    }
+
+    public function getPhoto(): ?UploadedFile
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?UploadedFile $photo): void
+    {
+        $this->photo = $photo;
+    }
 }
