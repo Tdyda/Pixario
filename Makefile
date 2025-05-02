@@ -7,17 +7,17 @@ down:
 restart: down up
 
 install:
-	docker compose exec php composer install
-	docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
+	docker compose exec app composer install
+	docker compose exec app php bin/console doctrine:migrations:migrate --no-interaction
 
 migrate:
-	docker compose exec php php bin/console doctrine:migrations:migrate
+	docker compose exec app php bin/console doctrine:migrations:migrate
 
 bash:
-	docker compose exec php bash
+	docker compose exec app bash
 
 cache-clear:
-	docker compose exec php php bin/console cache:clear
+	docker compose exec app php bin/console cache:clear
 
 test:
-	docker compose exec php ./vendor/bin/phpunit
+	docker compose exec app ./vendor/bin/phpunit
