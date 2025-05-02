@@ -4,8 +4,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    photo_room_api_key: '%env(PHOTOROOM_API_KEY)%'
-    photo_room_api_url: '%env(PHOTOROOM_API_URL)%'
+    photo_room_api_key: '%env(PHOTO_ROOM_API_KEY)%'
+    photo_room_api_url: '%env(PHOTO_ROOM_API_URL)%'
+    upload_target_directory: '%env(UPLOAD_TARGET_DIRECTORY)%
 
 services:
     # default configuration for services in *this* file
@@ -21,6 +22,16 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+
+    App\Service\PhotoRoomService:
+        arguments:
+            $photoRoomApiUrl: '%photo_room_api_url%'
+            $photoRoomApiKey: '%photo_room_api_key%'
+
+        App\Service\FileStorageService:
+            arguments:
+                $targetDirectory: '%upload_target_directory%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
