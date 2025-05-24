@@ -1,0 +1,25 @@
+# Ignoruj pliki konfiguracyjne edytorów/IDE
+.vscode/
+.idea/
+*.swp
+
+# Ignoruj zależności lokalne, które będą instalowane w kontenerze
+/vendor/
+
+# Ignoruj pliki systemowe i cache
+node_modules/
+var/cache/
+var/log/
+var/tmp/
+.env.local
+.env.test.local
+.env.dev.local
+
+# Ignoruj pliki tymczasowe
+*.log
+*.tmp
+*.bak
+
+# Ignoruj pliki systemowe
+.DS_Store
+Thumbs.db
