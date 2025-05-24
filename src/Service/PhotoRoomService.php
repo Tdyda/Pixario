@@ -38,26 +38,40 @@ class PhotoRoomService
             "Content-Disposition: form-data; name=\"image_target\"; filename=\"$filename\"\r\n" .
             "Content-Type: $mime\r\n\r\n" .
             $fileContent . "\r\n" .
+            "--$boundary\r\n" .
+            "Content-Disposition: form-data; name=\"beauty_level\"\r\n\r\n" .
+            "0.4\r\n" .
+            "--$boundary\r\n" .
+            "Content-Disposition: form-data; name=\"task_type\"\r\n\r\n" .
+            "sync\r\n" .
+            "--$boundary\r\n" .
+            "Content-Disposition: form-data; name=\"multi_face\"\r\n\r\n" .
+            "1\r\n" .
             "--$boundary--\r\n";
 
         try {
             $response = $client->request('POST', $this->apiUrl, [
                 'headers' => [
-                    'x-api-key' => $this->apiKey,
-                    'Accept' => 'image/png',
+                    'ailabapi-api-key' => $this->apiKey,
                     'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
                 ],
                 'body' => $body,
             ]);
 
             if ($response->getStatusCode() !== 200) {
-                $this->logger->error('PhotoRoom response error: ' . $response->getStatusCode());
-                throw new HttpException($response->getStatusCode(), 'PhotoRoom API failed.');
+                $this->logger->error('AILabTools response error: ' . $response->getStatusCode());
+                throw new HttpException($response->getStatusCode(), 'AILabTools API failed.');
             }
 
-            return $response->getContent(false);
+            $content = $response->toArray(false);
+
+            if (!isset($content['data']['image'])) {
+                throw new HttpException(500, 'AILabTools returned invalid response.');
+            }
+
+            return $content['data']['image']; // base64
         } catch (TransportExceptionInterface $e) {
-            $this->logger->error('PhotoRoom API error: ' . $e->getMessage());
+            $this->logger->error('AILabTools API error: ' . $e->getMessage());
             throw new HttpException(500, 'Failed to retouch image. Error: ' . $e->getMessage());
         }
     }
