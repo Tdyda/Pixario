@@ -3,9 +3,10 @@
 namespace App\EventSubscriber;
 
 use App\DTO\Response\ErrorResponse;
+use App\Exception\ForbiddenActionException;
 use App\Exception\InvalidCredentialsException;
+use App\Exception\InvalidTokenException;
 use App\Exception\UserAlreadyExistsException;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidTokenException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -15,9 +16,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
     private const EXCEPTION_STATUS_MAP = [
-        InvalidTokenException::class => 401,
         UserAlreadyExistsException::class => 409,
-        InvalidCredentialsException::class => 401
+        InvalidCredentialsException::class => 401,
+        ForbiddenActionException::class => 403,
+        InvalidTokenException::class => 401,
     ];
 
     public static function getSubscribedEvents(): array
