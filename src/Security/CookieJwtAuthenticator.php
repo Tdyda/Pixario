@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Exception\InvalidTokenException;
 use App\Repository\UserRepository;
 use App\Service\JwtService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,16 +22,20 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
-        return $request->cookies->has('access_token');
+        return str_starts_with($request->getPathInfo(), '/api') &&
+            !preg_match('#^/api/auth/(sign-in|sign-up|refresh)$#', $request->getPathInfo());
     }
 
     public function authenticate(Request $request): Passport
     {
-        $accessToken = $request->cookies->get('access_token');
+        $accessToken = $request->cookies->get('access_token') ?? null;
+
+        if(!$accessToken) throw new InvalidTokenException('Brak access_token');
+
         $payload = $this->jwtService->decode($accessToken);
 
         if (!$payload || !isset($payload['username'])) {
-            throw new AuthenticationException('Invalid token');
+            throw new InvalidTokenException();
         }
 
         return new SelfValidatingPassport(
@@ -40,7 +45,10 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
-        return new JsonResponse(['error' => 'Unauthorized'], 401);
+        return new JsonResponse([
+            'success' => false,
+            'error' => $exception->getMessage()
+        ], 401);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?JsonResponse
