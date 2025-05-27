@@ -2,11 +2,11 @@
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Psr\Log\LoggerInterface;
 
 class PhotoRoomService
 {
@@ -15,10 +15,11 @@ class PhotoRoomService
     private LoggerInterface $logger;
 
     public function __construct(
-        string $photoRoomApiUrl,
-        string $photoRoomApiKey,
+        string          $photoRoomApiUrl,
+        string          $photoRoomApiKey,
         LoggerInterface $logger
-    ) {
+    )
+    {
         $this->apiKey = $photoRoomApiKey;
         $this->apiUrl = $photoRoomApiUrl;
         $this->logger = $logger;
