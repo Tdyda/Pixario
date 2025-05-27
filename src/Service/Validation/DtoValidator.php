@@ -18,9 +18,8 @@ class DtoValidator
     {
         $errors = $this->validator->validate($dto);
 
-        if(count($errors) > 0)
-        {
-            if($throwException){
+        if (count($errors) > 0) {
+            if ($throwException) {
                 throw new UnprocessableEntityHttpException($this->formatErrors($errors));
             }
 
@@ -34,7 +33,7 @@ class DtoValidator
     {
         $messages = [];
 
-        foreach($errors as $error){
+        foreach ($errors as $error) {
             $messages[] = sprintf('%s: %s', $error->getPropertyPath(), $error->getMessage());
         }
 

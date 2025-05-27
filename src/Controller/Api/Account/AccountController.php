@@ -2,78 +2,83 @@
 
 namespace App\Controller\Api\Account;
 
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\DTO\Response\SuccessResponse;
+use App\Service\AuthService;
+use App\Service\JwtService;
 use App\Service\Validation\DtoValidator;
 use App\Service\Validation\SignInRequest;
 use App\Service\Validation\SignUpRequest;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AccountController extends AbstractController
 {
-    #[Route('/account/sign-in', name: 'app_account_sign_in', methods: ['POST'])]
+    #[Route('/api/auth/sign-in', name: 'app_account_sign_in', methods: ['POST'])]
     public function signIn(
-        Request                     $request,
-        SerializerInterface         $serializer,
-        DtoValidator                $validator,
-        UserRepository              $userRepository,
-        UserPasswordHasherInterface $passwordHasher
+        Request             $request,
+        SerializerInterface $serializer,
+        DtoValidator        $validator,
+        AuthService         $authService,
+        JwtService          $jwtService
     ): JsonResponse
     {
         $dto = $serializer->deserialize($request->getContent(), SignInRequest::class, 'json');
         $validator->validate($dto);
 
         try {
-            $user = $userRepository->findOneBy(['email' => $dto->email]);
+            $tokens = $authService->signIn($dto);
+            $response = new JsonResponse(new SuccessResponse('Użytkownik został zalogowany'),
+                JsonResponse::HTTP_OK);
 
-            if (!$user || !$passwordHasher->isPasswordValid($user, $dto->password)) {
-                return $this->json(['error' => 'Błędne dane logowania!'], 403);
-            }
+            $response->headers->setCookie(
+                Cookie::create('access_token')
+                    ->withValue($tokens['access_token'])
+                    ->withHttpOnly(true)
+                    ->withSecure(true)
+                    ->withSameSite('Strict')
+                    ->withPath('/')
+                    ->withExpires($jwtService->getTokenExpiry('access'))
+            );
 
-            return $this->json(['user' => $user], 201);
+            $response->headers->setCookie(
+                Cookie::create('refresh_token')
+                    ->withValue($tokens['refresh_token'])
+                    ->withHttpOnly(true)
+                    ->withSecure(true)
+                    ->withSameSite('Strict')
+                    ->withPath('/')
+                    ->withExpires($jwtService->getTokenExpiry('refresh'))
+            );
+
+            return $response;
         } catch (\LogicException $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
     }
 
-    #[Route('/account/sign-up', name: 'app_account_sign_up', methods: ['POST'])]
+    #[Route('/api/auth/sign-up', name: 'app_account_sign_up', methods: ['POST'])]
     public function signUp(
         Request             $request,
         SerializerInterface $serializer,
         DtoValidator        $validator,
-        UserRepository      $userRepository,
-        UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $em
-    )
+        AuthService         $authService
+    ): JsonResponse
     {
         $dto = $serializer->deserialize($request->getContent(), SignUpRequest::class, 'json');
         $validator->validate($dto);
 
-        try{
-            $user = $userRepository->findOneBy(['email' => $dto->email]);
-            if($user){
-                return $this->json(['message' => "Użytkownik z tym adresem email już istnieje!"], 409);
-            }
+        try {
+            $authService->signUp($dto);
 
-            $user = new User();
-            $user->setEmail($dto->email);
-            $user->setPassword($passwordHasher->hashPassword($user, $dto->password));
-
-            $em->persist($user);
-            $em->flush();
-
-            return $this->json(['message' => 'Użytkownik został zarejestrowany.'], 201);
-        }catch(\Exception $e){
+            return $this->json(
+                new SuccessResponse('Użytkownik został zarejestrowany'),
+                JsonResponse::HTTP_CREATED);
+        } catch (\LogicException $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
-
     }
-
 }
