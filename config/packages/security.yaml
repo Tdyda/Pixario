@@ -10,27 +10,27 @@ security:
                 class: App\Entity\User
                 property: email
     firewalls:
-        login:
-            pattern: ^/api/account/sign-in
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        public:
+            pattern: ^/api/auth/(sign-in|sign-up|refresh)
             stateless: true
-            json_login:
-                check_path: /api/account/sign-in
-                username_path: email
-                password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            security: false
 
         api:
             pattern: ^/api
             stateless: true
+            provider: app_user_provider
             custom_authenticators:
                 - App\Security\CookieJwtAuthenticator
 
     access_control:
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
-
-
+        - { path: ^/api/auth/sign-in, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/logout, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

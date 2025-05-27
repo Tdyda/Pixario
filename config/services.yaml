@@ -7,6 +7,7 @@ parameters:
     photo_room_api_key: '%env(PHOTO_ROOM_API_KEY)%'
     photo_room_api_url: '%env(PHOTO_ROOM_API_URL)%'
     upload_target_directory: '%env(UPLOAD_TARGET_DIRECTORY)%'
+    jwt_secret: '%env(JWT_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -23,7 +24,6 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-
     App\Service\PhotoRoomService:
         arguments:
             $photoRoomApiUrl: '%photo_room_api_url%'
@@ -32,6 +32,13 @@ services:
     App\Service\FileStorageService:
         arguments:
             $targetDirectory: '%upload_target_directory%'
+
+    App\Service\JwtService:
+        arguments:
+            $jwtSecret: '%jwt_secret%'
+
+    App\EventSubscriber\ApiExceptionSubscriber:
+        tags: [ kernel.event_subscriber ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

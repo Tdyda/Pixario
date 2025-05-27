@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -32,6 +34,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * @var Collection<int, RefreshToken>
+     */
+    #[ORM\OneToMany(targetEntity: RefreshToken::class, mappedBy: 'userRef', orphanRemoval: true)]
+    private Collection $refreshTokens;
+
+    public function __construct(
+        string $email,
+        string $password,
+        array  $roles = [],
+    )
+    {
+        $this->refreshTokens = new ArrayCollection();
+        $this->email = $email;
+        $this->password = $password;
+        $this->roles = $roles;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -56,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -103,5 +123,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, RefreshToken>
+     */
+    public function getRefreshTokens(): Collection
+    {
+        return $this->refreshTokens;
+    }
+
+    public function addRefreshToken(RefreshToken $refreshToken): static
+    {
+        if (!$this->refreshTokens->contains($refreshToken)) {
+            $this->refreshTokens->add($refreshToken);
+            $refreshToken->setUserRef($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRefreshToken(RefreshToken $refreshToken): static
+    {
+        if ($this->refreshTokens->removeElement($refreshToken)) {
+            // set the owning side to null (unless already changed)
+            if ($refreshToken->getUserRef() === $this) {
+                $refreshToken->setUserRef(null);
+            }
+        }
+
+        return $this;
     }
 }

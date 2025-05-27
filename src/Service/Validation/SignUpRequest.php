@@ -3,6 +3,7 @@
 namespace App\Service\Validation;
 
 use Symfony\Component\Validator\Constraints as Assert;
+
 class SignUpRequest extends SignInRequest
 {
     #[Assert\NotBlank(message: "Pole powtórz hasło nie może być puste.")]
