@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -32,7 +33,7 @@ final class AccountController extends AbstractController
         try {
             $tokens = $authService->signIn($dto);
             $response = new JsonResponse(new SuccessResponse('Użytkownik został zalogowany'),
-                JsonResponse::HTTP_OK);
+                Response::HTTP_OK);
 
             $response->headers->setCookie(
                 Cookie::create('access_token')
@@ -48,8 +49,8 @@ final class AccountController extends AbstractController
                 Cookie::create('refresh_token')
                     ->withValue($tokens['refresh_token'])
                     ->withHttpOnly(true)
-                    ->withSecure(true)
-                    ->withSameSite('Strict')
+                    ->withSecure(false)
+                    ->withSameSite('Lax')
                     ->withPath('/')
                     ->withExpires($jwtService->getTokenExpiry('refresh'))
             );
@@ -76,7 +77,7 @@ final class AccountController extends AbstractController
 
             return $this->json(
                 new SuccessResponse('Użytkownik został zarejestrowany'),
-                JsonResponse::HTTP_CREATED);
+                Response::HTTP_CREATED);
         } catch (\LogicException $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
