@@ -3,6 +3,7 @@
 namespace App\Service\Validation;
 
 use Symfony\Component\Validator\Constraints as Assert;
+
 class SignInRequest
 {
     #[Assert\NotBlank(message: 'Email nie może być pusty.')]
