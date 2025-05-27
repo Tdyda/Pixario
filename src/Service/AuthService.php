@@ -2,16 +2,18 @@
 
 namespace App\Service;
 
+use App\DTO\Auth\RefreshRequest;
+use App\DTO\Auth\SignInRequest;
+use App\DTO\Auth\SignUpRequest;
 use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Exception\InvalidCredentialsException;
 use App\Exception\UserAlreadyExistsException;
 use App\Factory\UserFactory;
 use App\Repository\UserRepository;
-use App\Service\Validation\SignInRequest;
-use App\Service\Validation\SignUpRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class AuthService
 {
@@ -49,6 +51,18 @@ class AuthService
         $user = $this->factory->createUser($dto);
         $this->em->persist($user);
         $this->em->flush();
+    }
+
+    public function refresh(RefreshRequest $dto): string
+    {
+        $user = $this->userRepository->findOneBy(['email' => $dto->email]);
+        $refreshToken = $dto->refreshToken;
+
+        if (!$user || !$refreshToken) {
+            throw new UserNotFoundException("Użytkownik nie istnieje");
+        }
+
+        return $this->jwtService->createAccessToken($user);
     }
 
     private function userExistsByEmail(string $email): bool

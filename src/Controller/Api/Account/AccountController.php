@@ -2,12 +2,14 @@
 
 namespace App\Controller\Api\Account;
 
+use App\DTO\Auth\RefreshRequest;
+use App\DTO\Auth\SignInRequest;
+use App\DTO\Auth\SignUpRequest;
+use App\DTO\Response\ErrorResponse;
 use App\DTO\Response\SuccessResponse;
 use App\Service\AuthService;
 use App\Service\JwtService;
 use App\Service\Validation\DtoValidator;
-use App\Service\Validation\SignInRequest;
-use App\Service\Validation\SignUpRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,15 +47,17 @@ final class AccountController extends AbstractController
                     ->withExpires($jwtService->getTokenExpiry('access'))
             );
 
-            $response->headers->setCookie(
-                Cookie::create('refresh_token')
-                    ->withValue($tokens['refresh_token'])
-                    ->withHttpOnly(true)
-                    ->withSecure(false)
-                    ->withSameSite('Lax')
-                    ->withPath('/')
-                    ->withExpires($jwtService->getTokenExpiry('refresh'))
-            );
+            if ($dto->rememberMe === true) {
+                $response->headers->setCookie(
+                    Cookie::create('refresh_token')
+                        ->withValue($tokens['refresh_token'])
+                        ->withHttpOnly(true)
+                        ->withSecure(false)
+                        ->withSameSite('Lax')
+                        ->withPath('/')
+                        ->withExpires($jwtService->getTokenExpiry('refresh'))
+                );
+            }
 
             return $response;
         } catch (\LogicException $e) {
@@ -81,5 +85,42 @@ final class AccountController extends AbstractController
         } catch (\LogicException $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
+    }
+
+    #[Route('/api/auth/refresh', name: 'app_account_refresh', methods: ['POST'])]
+    public function refresh(
+        Request             $request,
+        SerializerInterface $serializer,
+        DtoValidator        $validator,
+        AuthService         $authService,
+        JwtService          $jwtService
+    ): JsonResponse
+    {
+        $dto = $serializer->deserialize($request->getContent(), RefreshRequest::class, 'json');
+        $refreshCookie = $request->cookies->get('refresh_token');
+        $dto->setRefreshToken($refreshCookie);
+
+        $validator->validate($dto);
+
+        try {
+            $accessToken = $authService->refresh($dto);
+
+            $response = new JsonResponse(new SuccessResponse('Refresh token poprawny!'));
+
+            $response->headers->setCookie(
+                Cookie::create('access_token')
+                    ->withValue($accessToken)
+                    ->withHttpOnly(true)
+                    ->withSecure(true)
+                    ->withSameSite('Strict')
+                    ->withPath('/')
+                    ->withExpires($jwtService->getTokenExpiry('access'))
+            );
+
+            return $response;
+        } catch (\LogicException $e) {
+            return $this->json([new ErrorResponse($e->getMessage())], 400);
+        }
+
     }
 }

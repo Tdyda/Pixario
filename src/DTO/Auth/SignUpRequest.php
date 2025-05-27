@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\Validation;
+namespace App\DTO\Auth;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SignUpRequest extends SignInRequest
+class SignUpRequest extends AuthRequest
 {
     #[Assert\NotBlank(message: "Pole powtórz hasło nie może być puste.")]
     public string $retypedPassword = '';

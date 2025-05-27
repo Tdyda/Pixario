@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Service\Validation;
+namespace App\DTO\Auth;
 
 use Symfony\Component\Validator\Constraints as Assert;
-
-class SignInRequest
+class AuthRequest
 {
     #[Assert\NotBlank(message: 'Email nie może być pusty.')]
     #[Assert\Email(message: 'Niepoprawny adres email')]

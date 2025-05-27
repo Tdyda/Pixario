@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
@@ -20,6 +21,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         InvalidCredentialsException::class => 401,
         ForbiddenActionException::class => 403,
         InvalidTokenException::class => 401,
+        UserNotFoundException::class => 404,
     ];
 
     public static function getSubscribedEvents(): array
