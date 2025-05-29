@@ -7,8 +7,10 @@ use App\DTO\Auth\SignInRequest;
 use App\DTO\Auth\SignUpRequest;
 use App\DTO\Response\SuccessResponse;
 use App\Exception\InvalidTokenException;
-use App\Service\AuthService;
-use App\Service\JwtService;
+use App\Service\Auth\AuthService;
+use App\Service\Auth\RefreshTokenManager;
+use App\Service\Auth\UserContextService;
+use App\Service\Token\JwtService;
 use App\Service\Validation\DtoValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -39,7 +41,7 @@ final class AccountController extends AbstractController
 
         $response->headers->setCookie(
             Cookie::create('access_token')
-                ->withValue($tokens['access_token'])
+                ->withValue($tokens->accessToken)
                 ->withHttpOnly(true)
                 ->withSecure(true)
                 ->withSameSite('Strict')
@@ -50,7 +52,7 @@ final class AccountController extends AbstractController
         if ($dto->rememberMe === true) {
             $response->headers->setCookie(
                 Cookie::create('refresh_token')
-                    ->withValue($tokens['refresh_token'])
+                    ->withValue($tokens->refreshToken)
                     ->withHttpOnly(true)
                     ->withSecure(false)
                     ->withSameSite('Lax')
@@ -112,8 +114,8 @@ final class AccountController extends AbstractController
 
     #[Route('/api/auth/me', name: 'app_account_me', methods: ['GET'])]
     public function authMe(
-        Request     $request,
-        AuthService $authService,
+        Request            $request,
+        UserContextService $userContextService,
     ): JsonResponse
     {
         $token = $request->cookies->get('access_token');
@@ -122,7 +124,7 @@ final class AccountController extends AbstractController
             throw new InvalidTokenException();
         }
 
-        $user = $authService->authMe($token);
+        $user = $userContextService->authMe($token);
 
         return $this->json([
             'user' => [
@@ -131,5 +133,24 @@ final class AccountController extends AbstractController
                 'roles' => $user->roles,
             ]
         ], Response::HTTP_OK);
+    }
+
+    #[Route('api/auth/logout', name: 'app_account_logout', methods: ['POST'])]
+    public function logout(
+        Request             $request,
+        RefreshTokenManager $refreshTokenManager,
+    ): JsonResponse
+    {
+        $token = $request->cookies->get('access_token');
+
+        if ($token) {
+            $refreshTokenManager->revokeAllTokensFromAccessToken($token);
+        }
+
+        $response = new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        $response->headers->clearCookie('access_token', '/', null, true, true, 'Strict');
+        $response->headers->clearCookie('refresh_token', '/', null, true, true, 'Strict');
+
+        return $response;
     }
 }

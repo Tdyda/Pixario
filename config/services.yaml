@@ -33,7 +33,7 @@ services:
         arguments:
             $targetDirectory: '%upload_target_directory%'
 
-    App\Service\JwtService:
+    App\Service\Token\JwtService:
         arguments:
             $jwtSecret: '%jwt_secret%'
 
