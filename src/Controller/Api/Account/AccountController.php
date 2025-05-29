@@ -154,7 +154,7 @@ final class AccountController extends AbstractController
         return $response;
     }
 
-    #[Route('api/auth/logout-from-all-devices', name: 'app_account_logout', methods: ['POST'])]
+    #[Route('api/auth/logout-from-all-devices', name: 'app_account_logout_from_all_devices', methods: ['POST'])]
     public function logoutFromAllDevices(
         Request             $request,
         RefreshTokenManager $refreshTokenManager,
