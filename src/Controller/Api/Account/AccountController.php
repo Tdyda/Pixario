@@ -135,8 +135,27 @@ final class AccountController extends AbstractController
         ], Response::HTTP_OK);
     }
 
-    #[Route('api/auth/logout', name: 'app_account_logout', methods: ['POST'])]
+    #[Route('/api/auth/logout', name: 'app_account_logout', methods: ['POST'])]
     public function logout(
+        Request             $request,
+        RefreshTokenManager $refreshTokenManager,
+    ) : JsonResponse
+    {
+        $refreshToken = $request->cookies->get('refresh_token');
+
+        if ($refreshToken) {
+            $refreshTokenManager->revokeSingleToken($refreshToken);
+        }
+
+        $response = new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        $response->headers->clearCookie('access_token', '/', null, true, true, 'Strict');
+        $response->headers->clearCookie('refresh_token', '/', null, true, true, 'Strict');
+
+        return $response;
+    }
+
+    #[Route('api/auth/logout-from-all-devices', name: 'app_account_logout', methods: ['POST'])]
+    public function logoutFromAllDevices(
         Request             $request,
         RefreshTokenManager $refreshTokenManager,
     ): JsonResponse

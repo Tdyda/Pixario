@@ -37,6 +37,16 @@ class RefreshTokenManager
         return $token;
     }
 
+    public function revokeSingleToken(string $token): void
+    {
+        $refreshToken = $this->refreshTokenRepository->findOneBy(['token' => $token]);
+
+        if($refreshToken) {
+            $this->em->remove($refreshToken);
+            $this->em->flush();
+        }
+    }
+
     public function revokeAllTokensFromAccessToken(string $accessToken): void
     {
         $decoded = $this->jwtService->decode($accessToken);
@@ -80,5 +90,4 @@ class RefreshTokenManager
 
         return $this->jwtService->createAccessToken($user);
     }
-
 }
