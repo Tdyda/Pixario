@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Token;
 
 use App\Entity\User;
 use Firebase\JWT\JWT;

@@ -4,7 +4,7 @@ namespace App\DTO\Auth;
 
 use App\Entity\User;
 
-class UserDTO
+class UserDto
 {
     public function __construct(
         public readonly string $id,

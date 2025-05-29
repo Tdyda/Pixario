@@ -4,7 +4,7 @@ namespace App\Security;
 
 use App\Exception\InvalidTokenException;
 use App\Repository\UserRepository;
-use App\Service\JwtService;
+use App\Service\Token\JwtService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
