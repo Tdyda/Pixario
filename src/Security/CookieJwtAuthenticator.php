@@ -30,7 +30,7 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
     {
         $accessToken = $request->cookies->get('access_token') ?? null;
 
-        if(!$accessToken) throw new InvalidTokenException('Brak access_token');
+        if (!$accessToken) throw new InvalidTokenException('Brak access_token');
 
         $payload = $this->jwtService->decode($accessToken);
 
