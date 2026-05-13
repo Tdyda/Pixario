@@ -1,0 +1,94 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 18px;
+}
+
+.photoCard {
+    position: relative;
+    border: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #f1ecff;
+    aspect-ratio: 1 / 1;
+    box-shadow: 0 16px 42px rgba(30, 19, 72, 0.1);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.photoCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(30, 19, 72, 0.16);
+}
+
+.photoCard img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photoOverlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(20, 8, 58, 0.38);
+    color: #ffffff;
+    font-size: 28px;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.photoCard:hover .photoOverlay {
+    opacity: 1;
+}
+
+.emptyState {
+    min-height: 310px;
+    border-radius: 20px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 38px;
+    text-align: center;
+    box-shadow: 0 18px 48px rgba(30, 19, 72, 0.08);
+}
+
+.emptyIcon {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background: #eee7ff;
+    color: #6f35e8;
+    display: grid;
+    place-items: center;
+    font-size: 38px;
+}
+
+.emptyState h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #17122b;
+}
+
+.emptyState p {
+    max-width: 420px;
+    margin: 0;
+    color: #7a728c;
+    line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .photoCard {
+        border-radius: 14px;
+    }
+}

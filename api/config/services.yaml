@@ -1,0 +1,72 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+  upload_target_directory: '%env(UPLOAD_TARGET_DIRECTORY)%'
+  jwt_secret: '%env(JWT_SECRET)%'
+
+services:
+  app.logger:
+    class: Monolog\Logger
+    arguments: [ 'app' ]
+    calls:
+      - [ pushHandler, [ '@monolog.handler.app_info' ] ]
+
+  app.generic_password_hasher:
+    class: Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher
+    arguments:
+      $cost: 13
+
+  Symfony\Component\PasswordHasher\PasswordHasherInterface: '@app.generic_password_hasher'
+
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
+
+  App\Infrastructure\Persistence\Storage\FileStorage:
+    arguments:
+      $targetDirectory: '%upload_target_directory%'
+
+  App\Security\Jwt\JwtStrategyInterface:
+    tags: [ 'app.jwt_strategy' ]
+
+  App\Api\Security\Jwt\UserJwtStrategy:
+    arguments:
+      $jwtSecret: '%env(JWT_SECRET)%'
+      $ttlSeconds: 3600
+    tags: [ 'app.jwt_strategy' ]
+
+  App\Api\Security\Jwt\AnonymousJwtStrategy:
+    arguments:
+      $jwtSecret: '%env(JWT_SECRET)%'
+      $accessTtl: 900
+    tags: [ 'app.jwt_strategy' ]
+
+  App\Api\Security\Jwt\JwtService:
+    arguments:
+      $jwtSecret: '%jwt_secret%'
+      $strategies: !tagged_iterator 'app.jwt_strategy'
+
+  App\Api\Security\Authenticator\XApiKeyAuthenticator:
+    arguments:
+      $apiKey: '%env(API_SECRET)%'
+
+  App\Api\Http\EventSubscriber\ApiExceptionSubscriber:
+    arguments:
+      $environment: '%kernel.environment%'
+    tags: [ 'kernel.event_subscriber' ]
+
+  # add more service definitions when explicit configuration is needed
+  # please note that last definitions always *replace* previous ones

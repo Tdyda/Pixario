@@ -1,0 +1,81 @@
+# =========================
+# GLOBAL
+# =========================
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# =========================
+# SYMFONY (api/)
+# =========================
+
+/api/var/
+/api/vendor/
+
+/api/.env.local
+/api/.env.*.local
+/api/phpunit.xml
+
+# Symfony cache & logs
+/api/var/cache/
+/api/var/log/
+/api/var/sessions/
+
+# PHPUnit
+/api/.phpunit.result.cache
+
+# Composer
+/api/composer.phar
+
+# =========================
+# REACT (frontend/)
+# =========================
+
+/frontend/node_modules/
+/frontend/build/
+/frontend/dist/
+/frontend/.cache/
+
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.test.local
+/frontend/.env.production.local
+
+# npm / yarn
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+
+# =========================
+# DOCKER
+# =========================
+
+docker-data/
+*.pid
+
+# =========================
+# OPTIONAL
+# =========================
+
+# Coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/

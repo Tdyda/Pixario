@@ -1,0 +1,8 @@
+controllers:
+  resource:
+    path: ../src/Api/Feature/
+    namespace: App\Api\Feature
+  type: attribute
+
+api_login_check:
+  path: /api/account/sign-in

@@ -1,0 +1,269 @@
+.authCard {
+    width: min(100%, 980px);
+    min-height: 560px;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(30, 19, 72, 0.12);
+    border: 1px solid rgba(124, 91, 255, 0.08);
+}
+
+.brandPanel {
+    background:
+            radial-gradient(circle at 50% 35%, rgba(122, 67, 255, 0.14), transparent 34%),
+            linear-gradient(180deg, #fbfaff 0%, #f1ecff 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 48px;
+    text-align: center;
+}
+
+.logo {
+    position: absolute;
+    top: 48px;
+    left: 56px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 22px;
+    color: #17122b;
+}
+
+.logoIcon {
+    color: #6f35e8;
+    font-size: 22px;
+}
+
+.brandIcon {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #eee7ff;
+    color: #6f35e8;
+    font-size: 34px;
+    box-shadow: 0 16px 32px rgba(111, 53, 232, 0.16);
+}
+
+.brandPanel h2 {
+    margin: 0;
+    color: #2f2850;
+    font-size: 22px;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.formPanel {
+    padding: 54px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e8e3f5;
+}
+
+.tabs button {
+    border: 0;
+    background: transparent;
+    padding: 0 0 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #9a93aa;
+    position: relative;
+}
+
+.tabs button.activeTab {
+    color: #17122b;
+}
+
+.tabs button.activeTab::after {
+    content: "";
+    position: absolute;
+    height: 3px;
+    border-radius: 999px;
+    background: #6f35e8;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+}
+
+.form {
+    width: 100%;
+}
+
+.formTitle {
+    display: none;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3a3355;
+}
+
+.input {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #ded8ea;
+    border-radius: 7px;
+    padding: 0 14px;
+    font-size: 14px;
+    color: #17122b;
+    outline: none;
+    background: #fff;
+}
+
+.input:focus {
+    border-color: #7b3fe4;
+    box-shadow: 0 0 0 3px rgba(123, 63, 228, 0.1);
+}
+
+.inputInvalid {
+    border-color: #dc3545;
+}
+
+.passwordWrapper {
+    position: relative;
+}
+
+.icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: #9a93aa;
+    cursor: pointer;
+}
+
+.formRow {
+    display: flex;
+    justify-content: flex-end;
+    margin: 8px 0 18px;
+}
+
+.forgotLink,
+.termsLink {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: #6f35e8;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.checkboxRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 16px 0 20px;
+    font-size: 13px;
+    color: #5d566f;
+}
+
+.submitButton {
+    width: 100%;
+    height: 46px;
+    border: 0;
+    border-radius: 7px;
+    background: linear-gradient(180deg, #7b3fe4, #5f28d7);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 10px 20px rgba(111, 53, 232, 0.22);
+}
+
+.submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 22px 0;
+    color: #aaa3b8;
+    font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ebe6f3;
+}
+
+.googleButton {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #ded8ea;
+    border-radius: 7px;
+    background: #fff;
+    font-weight: 700;
+    color: #312a45;
+}
+
+.footerText {
+    margin: 20px 0 0;
+    font-size: 12px;
+    text-align: center;
+    color: #9a93aa;
+}
+
+.error {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .authCard {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        width: min(100%, 390px);
+    }
+
+    .brandPanel {
+        display: none;
+    }
+
+    .formPanel {
+        padding: 34px 24px;
+    }
+
+    .logo {
+        position: static;
+    }
+}
+
+.checkboxRow {
+    margin-bottom: 1rem;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
