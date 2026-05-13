@@ -39,9 +39,9 @@ final class RefreshTokenFeature extends AbstractController
         $response->headers->setCookie(
             Cookie::create('access_token')
                 ->withValue($accessToken)
-                ->withHttpOnly(true)
-                ->withSecure(false)
-                ->withSameSite('Lax')
+                ->withHttpOnly()
+                ->withSecure()
+                ->withSameSite('Strict')
                 ->withPath('/')
                 ->withExpires($jwtService->getTokenExpiry('access'))
         );

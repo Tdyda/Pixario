@@ -24,8 +24,8 @@ final class LogoutFeature extends AbstractController
         }
 
         $response = new JsonResponse(null, Response::HTTP_NO_CONTENT);
-        $response->headers->clearCookie('access_token', '/', null, false, true, 'lax');
-        $response->headers->clearCookie('refresh_token', '/', null, false, true, 'lax');
+        $response->headers->clearCookie('access_token', '/', null, true, true, 'Strict');
+        $response->headers->clearCookie('refresh_token', '/', null, true, true, 'Strict');
 
         return $response;
     }

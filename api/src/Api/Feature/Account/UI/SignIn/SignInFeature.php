@@ -38,8 +38,8 @@ final class SignInFeature extends AbstractController
             Cookie::create('access_token')
                 ->withValue($tokens->accessToken)
                 ->withHttpOnly()
-                ->withSecure(false)
-                ->withSameSite('Lax')
+                ->withSecure()
+                ->withSameSite('Strict')
                 ->withPath('/')
                 ->withExpires($jwtService->getTokenExpiry('access'))
         );
@@ -49,8 +49,8 @@ final class SignInFeature extends AbstractController
                 Cookie::create('refresh_token')
                     ->withValue($tokens->refreshToken)
                     ->withHttpOnly()
-                    ->withSecure(false)
-                    ->withSameSite('Lax')
+                    ->withSecure()
+                    ->withSameSite('Strict')
                     ->withPath('/')
                     ->withExpires($jwtService->getTokenExpiry('refresh'))
             );
