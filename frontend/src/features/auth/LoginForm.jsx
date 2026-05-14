@@ -130,7 +130,11 @@ const LoginForm = () => {
                 </div>
 
                 <div className={styles.formRow}>
-                    <button type="button" className={styles.forgotLink}>
+                    <button
+                        type="button"
+                        className={styles.forgotLink}
+                        onClick={() => navigate("/recover-token")}
+                    >
                         Nie pamiętasz hasła?
                     </button>
                 </div>
