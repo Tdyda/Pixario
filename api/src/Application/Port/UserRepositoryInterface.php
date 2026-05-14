@@ -20,4 +20,5 @@ interface UserRepositoryInterface
     function remove(UserEntity $user): void;
 
     function update(User $user): void;
+    function changePassword(User $user, string $newPassword): void;
 }

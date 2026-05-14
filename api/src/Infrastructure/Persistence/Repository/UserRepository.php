@@ -97,4 +97,12 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         $entity->setIsActive($user->isActive());
         $this->getEntityManager()->flush();
     }
+
+    function changePassword(User $user, string $newPassword): void
+    {
+        $entity = $this->find($user->getId());
+
+        $entity->setPassword($this->passwordHasher->hashPassword($entity, $newPassword));
+        $this->getEntityManager()->flush();
+    }
 }
