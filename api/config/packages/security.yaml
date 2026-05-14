@@ -36,6 +36,7 @@ security:
     - { path: ^/api/auth/sign-in, roles: PUBLIC_ACCESS }
     - { path: ^/api/gallery(/.*)?$, roles: PUBLIC_ACCESS }
     - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
+    - { path: ^/api/activate-account, roles: PUBLIC_ACCESS}
     - { path: ^/webhooks/processed-image, allow_if: "is_granted('ROLE_API_KEY')" }
     - { path: ^/api/logout, roles: IS_AUTHENTICATED_FULLY }
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

@@ -15,11 +15,13 @@ final class UserMapper
         return User::create(
             id: $entity->getId(),
             email: $entity->getEmail(),
+            activationToken: $entity->getActivationToken(),
             roles: $entity->getRoles(),
             refreshTokens: array_map(
                 static fn(RefreshTokenEntity $token): RefreshToken => RefreshTokenMapper::toDomain($token),
                 $entity->getRefreshTokens()->toArray()
-            )
+            ),
+            isActive: $entity->isActive(),
         );
     }
 
@@ -28,6 +30,8 @@ final class UserMapper
         $entity = new UserEntity(
             $domain->getId(),
             $domain->getEmail(),
+            $domain->isActive(),
+            $domain->getActivationToken(),
             $domain->getRoles(),
         );
 
@@ -38,23 +42,5 @@ final class UserMapper
         }
 
         return $entity;
-    }
-
-    public static function toApplicationUser(UserEntity $entity): ApplicationUser
-    {
-        return new ApplicationUser(
-            id: $entity->getId(),
-            email: $entity->getEmail(),
-            roles: $entity->getRoles(),
-        );
-    }
-
-    public static function applicationUserToDomain(ApplicationUser $applicationUser): User
-    {
-        return User::create(
-            $applicationUser->getId(),
-            $applicationUser->getUserIdentifier(),
-            $applicationUser->getRoles()
-        );
     }
 }

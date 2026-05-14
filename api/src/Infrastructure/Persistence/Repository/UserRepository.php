@@ -9,6 +9,8 @@ use App\Infrastructure\Persistence\Model\UserEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Uid\Exception\LogicException;
 
 /**
  * @extends ServiceEntityRepository<UserEntity>
@@ -76,5 +78,23 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         }
 
         return UserMapper::toDomain($entity);
+    }
+
+    function findByActivationToken(string $activationToken): ?User
+    {
+       $entity = $this->findOneBy(['activationToken' => $activationToken]);
+       return UserMapper::toDomain($entity);
+    }
+
+    function update(User $user): void
+    {
+        $entity = $this->find($user->getId());
+
+        if($entity === null) {
+            throw new UserNotFoundException();
+        }
+
+        $entity->setIsActive($user->isActive());
+        $this->getEntityManager()->flush();
     }
 }

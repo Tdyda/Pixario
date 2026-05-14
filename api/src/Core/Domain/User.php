@@ -2,23 +2,27 @@
 
 namespace App\Core\Domain;
 
-final readonly class User
+final class User
 {
     private function __construct(
-        private string $id,
-        private string $email,
-        private array $roles,
-        private array $refreshTokens,
+        private readonly string $id,
+        private readonly string $email,
+        private readonly string $activationToken,
+        private readonly array $roles,
+        private readonly array $refreshTokens,
+        private bool $isActive
     ) {
     }
 
     public static function create(
         string $id,
         string $email,
+        string $activationToken,
         array $roles = [],
-        array $refreshTokens = []
+        array $refreshTokens = [],
+        bool $isActive = false
     ): self {
-        return new self($id, $email, $roles, $refreshTokens);
+        return new self($id, $email, $activationToken, $roles, $refreshTokens, $isActive);
     }
 
     public function getId(): string
@@ -29,6 +33,21 @@ final readonly class User
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getActivationToken(): string
+    {
+        return $this->activationToken;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 
     public function getRoles(): array

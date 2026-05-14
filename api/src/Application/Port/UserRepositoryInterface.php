@@ -13,7 +13,11 @@ interface UserRepositoryInterface
 
     function findByEmail(string $email): ?User;
 
+    function findByActivationToken(string $activationToken): ?User;
+
     function save(User $user, string $plainPassword): void;
 
     function remove(UserEntity $user): void;
+
+    function update(User $user): void;
 }

@@ -29,7 +29,8 @@ class CookieJwtAuthenticator extends AbstractAuthenticator
 
         return str_starts_with($path, '/api')
             && !preg_match('#^/api/gallery/get($|/)#', $path)
-            && $path !== '/api/processed/image/webhook';
+            && $path !== '/api/processed/image/webhook'
+            && $path !== '/api/activate-account';
     }
 
 

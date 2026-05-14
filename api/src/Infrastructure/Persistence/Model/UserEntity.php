@@ -27,6 +27,12 @@ class UserEntity implements PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private string $password;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isActive;
+
+    #[ORM\Column(type: 'string')]
+    private string $activationToken;
+
     /** @var Collection<int, RefreshTokenEntity> */
     #[ORM\OneToMany(
         targetEntity: RefreshTokenEntity::class,
@@ -47,10 +53,14 @@ class UserEntity implements PasswordAuthenticatedUserInterface
     public function __construct(
         string $id,
         string $email,
+        bool $isActive,
+        string $activationToken,
         array $roles = [],
     ) {
         $this->id = $id;
         $this->email = $email;
+        $this->isActive = $isActive;
+        $this->activationToken = $activationToken;
         $this->password = '';
         $this->roles = $roles;
         $this->refreshTokens = new ArrayCollection();
@@ -85,6 +95,26 @@ class UserEntity implements PasswordAuthenticatedUserInterface
     public function setPassword(string $password): void
     {
         $this->password = $password;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
+    }
+
+    public function getActivationToken(): string
+    {
+        return $this->activationToken;
+    }
+
+    public function setActivationToken(string $activationToken): void
+    {
+        $this->activationToken = $activationToken;
     }
 
     /** @return Collection<int, RefreshTokenEntity> */
