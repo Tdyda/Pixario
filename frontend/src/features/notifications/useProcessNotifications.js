@@ -21,7 +21,7 @@ export function useNotifications(userId) {
         const topic = encodeURIComponent(`/users/${userId}/notifications`);
 
         const eventSource = new EventSource(
-            `http://localhost:3001/.well-known/mercure?topic=${topic}`
+            `https://pixario.pl/.well-known/mercure?topic=${topic}`
         );
 
         eventSource.onmessage = (event) => {

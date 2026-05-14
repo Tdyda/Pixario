@@ -16,7 +16,6 @@ Thumbs.db
 *.log
 
 # Env files
-.env
 .env.local
 .env.*.local
 
