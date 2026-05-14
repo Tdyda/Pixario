@@ -2,7 +2,6 @@ import { useState } from "react";
 import styles from "./AuthForm.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import Alert from "../../components/Alert/Alert.jsx";
 import {
     validateEmail,
     validatePassword,
@@ -23,7 +22,7 @@ const RegisterForm = () => {
         password: false,
         retypedPassword: false,
     });
-    const [showAlert, setShowAlert] = useState(false);
+    const [activationEmailSent, setActivationEmailSent] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
 
     const { register } = useAuth();
@@ -53,7 +52,7 @@ const RegisterForm = () => {
             });
 
             if (response.status >= 200 && response.status < 300) {
-                setShowAlert(true);
+                setActivationEmailSent(true);
             }
         } catch (err) {
             setErrors({
@@ -99,6 +98,33 @@ const RegisterForm = () => {
         !!errors.password ||
         !!errors.retypedPassword ||
         !isChecked;
+
+    if (activationEmailSent) {
+        return (
+            <div className={styles.successState}>
+                <div className={styles.successIcon}>
+                    <i className="bi bi-envelope-check" />
+                </div>
+
+                <h2>Sprawdź swoją skrzynkę</h2>
+
+                <p>
+                    Wysłaliśmy link aktywacyjny na adres:
+                    <br />
+                    <strong>{formData.email}</strong>
+                </p>
+
+                <div className={styles.successHint}>
+                    <i className="bi bi-info-circle" />
+
+                    <span>
+                    Jeśli wiadomość nie dotarła w ciągu kilku minut,
+                    sprawdź folder <strong>spam</strong> lub <strong>oferty</strong>.
+                </span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.form}>
@@ -177,14 +203,6 @@ const RegisterForm = () => {
                     Utwórz konto
                 </button>
             </form>
-
-            {showAlert && (
-                <Alert
-                    message="Poprawnie zarejestrowano"
-                    onClose={() => setShowAlert(false)}
-                    alertType="success"
-                />
-            )}
         </div>
     );
 };

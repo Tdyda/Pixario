@@ -1,0 +1,150 @@
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background:
+            radial-gradient(circle at 15% 20%, rgba(123, 63, 228, 0.12), transparent 28%),
+            radial-gradient(circle at 85% 80%, rgba(123, 63, 228, 0.14), transparent 30%),
+            #f8f7fb;
+}
+
+.card {
+    width: min(100%, 560px);
+    padding: 46px;
+    border-radius: 28px;
+    background: #ffffff;
+    text-align: center;
+    box-shadow: 0 24px 80px rgba(30, 19, 72, 0.12);
+    border: 1px solid rgba(124, 91, 255, 0.08);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 34px;
+    color: #17122b;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.brand span {
+    color: #6f35e8;
+}
+
+.icon {
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 42px;
+}
+
+.success {
+    background: #e8fff1;
+    color: #0d8a4b;
+}
+
+.info,
+.loading {
+    background: #eee7ff;
+    color: #6f35e8;
+}
+
+.error {
+    background: #ffe8e8;
+    color: #d33b3b;
+}
+
+.eyebrow {
+    display: inline-flex;
+    margin-bottom: 10px;
+    color: #6f35e8;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.card h1 {
+    margin: 0;
+    color: #17122b;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.card p {
+    max-width: 440px;
+    margin: 16px auto 0;
+    color: #7a728c;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.spinner {
+    margin-top: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #6f35e8;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+}
+
+.primaryButton {
+    min-width: 220px;
+    min-height: 46px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #8d55ff, #6228db);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 22px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 12px 24px rgba(111, 53, 232, 0.24);
+}
+
+.primaryButton:hover {
+    color: #ffffff;
+    filter: brightness(1.04);
+}
+
+.secondaryLink {
+    color: #6f35e8;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.secondaryLink:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 18px;
+    }
+
+    .card {
+        padding: 34px 24px;
+        border-radius: 22px;
+    }
+}

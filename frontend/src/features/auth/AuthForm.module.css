@@ -267,3 +267,62 @@
     cursor: pointer;
     font-size: 0.95rem;
 }
+
+.successState {
+    width: 100%;
+    text-align: center;
+    padding: 18px 0;
+}
+
+.successIcon {
+    width: 86px;
+    height: 86px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: #eee7ff;
+    color: #6f35e8;
+    display: grid;
+    place-items: center;
+    font-size: 38px;
+}
+
+.successState h2 {
+    margin: 0;
+    color: #17122b;
+    font-size: 28px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.successState p {
+    margin: 16px 0 0;
+    color: #7a728c;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.successState strong {
+    color: #17122b;
+    font-weight: 800;
+}
+
+.successHint {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #fff6df;
+    border: 1px solid #ffe4a3;
+    color: #7a4e00;
+    font-size: 13px;
+    line-height: 1.55;
+    text-align: left;
+}
+
+.successHint i {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
