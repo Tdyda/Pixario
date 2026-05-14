@@ -19,6 +19,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
+RUN cp docker/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
+
 RUN composer install --no-interaction --prefer-dist
 
 CMD ["php-fpm"]
