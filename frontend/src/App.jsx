@@ -17,6 +17,8 @@ import { setAuthHelpers } from "./api/authBridge.js";
 import WelcomePage from "./pages/WelcomePage/WelcomePage.jsx";
 import {useNotifications} from "./features/notifications/useProcessNotifications.js";
 import ActivateAccountPage from "./pages/ActivateAccountPage/ActivateAccountPage.jsx";
+import RecoverPasswordPage from "./pages/RecoverPasswordPage/RecoverPasswordPage.jsx";
+import RecoverTokenPage from "./pages/RecoverTokenPage/RecoverTokenPage.jsx";
 
 export default function App() {
     const { user, logout } = useAuth();
@@ -34,6 +36,8 @@ export default function App() {
             {/* Logowanie / rejestracja */}
             <Route path="/auth/:tab" element={<AuthPage />} />
             <Route path="/activate-account" element={<ActivateAccountPage />} />
+            <Route path="/recover-password" element={<RecoverPasswordPage />} />
+            <Route path="/recover-token" element={<RecoverTokenPage />} />
 
             <Route path="/" element={<WelcomePage />} />
 

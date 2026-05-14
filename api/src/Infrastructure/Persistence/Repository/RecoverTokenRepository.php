@@ -12,6 +12,9 @@ use App\Infrastructure\Persistence\Model\UserEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @extends ServiceEntityRepository<RecoverTokenEntity>
@@ -28,9 +31,19 @@ class RecoverTokenRepository extends ServiceEntityRepository implements RecoverT
         /** @var RecoverTokenEntity|null $entity */
         $entity = $this->findOneBy(['tokenHash' => $tokenHash]);
         if (!$entity) {
-            throw new \RuntimeException('Token not found');
+            throw new NotFoundHttpException('Token not found'); //404
+        }
+        if($entity->getExpiresAt() <= new \DateTimeImmutable('now')) {
+            throw new GoneHttpException('Token expired'); //410
+        }
+        if($entity->getUsedAt() !== null) {
+            throw new ConflictHttpException('Token already used'); //409
         }
         $user = $entity->getUserRef();
+
+        $entity->setUsedAt(new \DateTimeImmutable('now'));
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
         return UserMapper::toDomain($user);
     }
