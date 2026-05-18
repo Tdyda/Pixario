@@ -11,7 +11,7 @@ services:
     expose:
       - 9000
     environment:
-      DATABASE_URL: "mysql://symfony:symfony@mysql:3306/symfony"
+      DATABASE_URL: ${DATABASE_URL}
 
   frontend:
     build:
@@ -27,7 +27,7 @@ services:
       - "443:443"
     volumes:
       - ./api:/var/www/html
-      - ./api/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${NGINX_CONF_PATH:-./api/docker/nginx/default.dev.conf}:/etc/nginx/conf.d/default.dev.conf:ro
       - certbot_www:/var/www/certbot
       - certbot_conf:/etc/letsencrypt
     depends_on:
@@ -57,10 +57,10 @@ services:
     restart: unless-stopped
     environment:
       SERVER_NAME: ":80"
-      MERCURE_PUBLISHER_JWT_KEY: "W8YhawRXY62qDmU90OU6k6+rk38vdGANaqocPbHdDSA="
-      MERCURE_SUBSCRIBER_JWT_KEY: "W8YhawRXY62qDmU90OU6k6+rk38vdGANaqocPbHdDSA="
+      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
       MERCURE_EXTRA_DIRECTIVES: |
-        cors_origins http://pixario.pl
+        cors_origins https://${APP_DOMAIN}
 
 volumes:
   db_data:

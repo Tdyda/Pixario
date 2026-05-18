@@ -42,6 +42,6 @@ final readonly class SignInHandler
 
         $refreshToken = $this->handler->createAndPersistRefreshToken($authUser->id);
 
-        return new TokenPairDto($accessToken, $refreshToken);
+        return new TokenPairDto($accessToken, $refreshToken, $authUser->id);
     }
 }

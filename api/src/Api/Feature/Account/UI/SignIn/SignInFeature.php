@@ -5,6 +5,7 @@ namespace App\Api\Feature\Account\UI\SignIn;
 use App\Api\Http\Response\SuccessResponse;
 use App\Api\Http\Validation\RequestValidator;
 use App\Api\Security\Jwt\JwtService;
+use App\Api\Security\Mercure\MercureTokenFactory;
 use App\Application\Feature\Account\SignIn\SignInCommand;
 use App\Application\Feature\Account\SignIn\SignInHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +24,8 @@ final class SignInFeature extends AbstractController
         SerializerInterface $serializer,
         RequestValidator $validator,
         SignInHandler $handler,
-        JwtService $jwtService
+        JwtService $jwtService,
+        MercureTokenFactory $mercureTokenFactory,
     ): JsonResponse {
         $command = $serializer->deserialize($request->getContent(), SignInCommand::class, 'json');
         $validator->validate($command);
@@ -41,6 +43,18 @@ final class SignInFeature extends AbstractController
                 ->withSecure()
                 ->withSameSite('Strict')
                 ->withPath('/')
+                ->withExpires($jwtService->getTokenExpiry('access'))
+        );
+
+        $mercureToken = $mercureTokenFactory->createSubscriberToken($tokens->userId);
+
+        $response->headers->setCookie(
+            Cookie::create('mercureAuthorization')
+                ->withValue($mercureToken)
+                ->withHttpOnly()
+                ->withSecure()
+                ->withSameSite('Strict')
+                ->withPath('/.well-known/mercure')
                 ->withExpires($jwtService->getTokenExpiry('access'))
         );
 

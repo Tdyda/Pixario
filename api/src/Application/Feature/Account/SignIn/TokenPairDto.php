@@ -10,10 +10,13 @@ class TokenPairDto
     public string $accessToken;
     #[Assert\NotBlank]
     public string $refreshToken;
+    #[Assert\NotBlank]
+    public string $userId;
 
-    public function __construct(string $accessToken, string $refreshToken)
+    public function __construct(string $accessToken, string $refreshToken, string $userId)
     {
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
+        $this->userId = $userId;
     }
 }

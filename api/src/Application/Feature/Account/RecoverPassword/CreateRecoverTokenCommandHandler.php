@@ -13,7 +13,8 @@ final readonly class CreateRecoverTokenCommandHandler
         private UserRepository $userRepository,
         private RecoverTokenRepositoryInterface $recoverTokenRepository,
         private MailerPort $mailer,
-        private RecoverPasswordMailBuilder $recoverPasswordMailBuilder
+        private RecoverPasswordMailBuilder $recoverPasswordMailBuilder,
+        private string $appDomain
     )
     {
     }
@@ -39,7 +40,7 @@ final readonly class CreateRecoverTokenCommandHandler
         $this->recoverTokenRepository->save($recoverToken, $user);
 
         $recoverPasswordUrl = sprintf(
-            'https://pixario.pl/recover-password?token=%s',
+            $this->appDomain . '/recover-password?token=%s',
             $token
         );
 
