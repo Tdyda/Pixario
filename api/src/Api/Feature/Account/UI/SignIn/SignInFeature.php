@@ -24,8 +24,7 @@ final class SignInFeature extends AbstractController
         SerializerInterface $serializer,
         RequestValidator $validator,
         SignInHandler $handler,
-        JwtService $jwtService,
-        MercureTokenFactory $mercureTokenFactory,
+        JwtService $jwtService
     ): JsonResponse {
         $command = $serializer->deserialize($request->getContent(), SignInCommand::class, 'json');
         $validator->validate($command);
@@ -46,11 +45,9 @@ final class SignInFeature extends AbstractController
                 ->withExpires($jwtService->getTokenExpiry('access'))
         );
 
-        $mercureToken = $mercureTokenFactory->createSubscriberToken($tokens->userId);
-
         $response->headers->setCookie(
             Cookie::create('mercureAuthorization')
-                ->withValue($mercureToken)
+                ->withValue($tokens->mercureToken)
                 ->withHttpOnly()
                 ->withSecure()
                 ->withSameSite('Strict')

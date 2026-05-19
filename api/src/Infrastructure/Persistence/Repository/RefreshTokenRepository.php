@@ -10,6 +10,7 @@ use App\Infrastructure\Persistence\Model\UserEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Exception\LogicException;
 
 /**
  * @extends ServiceEntityRepository<RefreshTokenEntity>
@@ -34,6 +35,17 @@ class RefreshTokenRepository extends ServiceEntityRepository implements RefreshT
         $entity = RefreshTokenMapper::toEntity($refreshToken, $userRef);
 
         $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+    }
+
+    function revoke(RefreshToken $refreshToken): void
+    {
+        /** @var RefreshTokenEntity $entity */
+        $entity = $this->find($refreshToken->getId());
+        if (!$entity) {
+            throw new LogicException('Refresh token not found');
+        }
+        $entity->revoke();
         $this->getEntityManager()->flush();
     }
 

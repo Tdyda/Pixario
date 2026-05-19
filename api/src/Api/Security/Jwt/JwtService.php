@@ -48,6 +48,9 @@ class JwtService
         return bin2hex(random_bytes(64));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getTokenExpiry(string $type): \DateTimeImmutable
     {
         return match ($type) {

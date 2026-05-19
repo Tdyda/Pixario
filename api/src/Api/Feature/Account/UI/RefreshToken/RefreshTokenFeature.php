@@ -6,6 +6,7 @@ use App\Api\Http\Response\SuccessResponse;
 use App\Api\Http\Validation\RequestValidator;
 use App\Api\Security\Jwt\JwtService;
 use App\Application\Feature\Account\RefreshToken\Refresh\RefreshTokenHandler;
+use App\Application\Feature\Account\SignIn\AuthTokensDto;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +28,7 @@ final class RefreshTokenFeature extends AbstractController
 
         $validator->validate($dto);
 
-        $accessToken = $handler->handle($dto->refreshToken);
+        $tokens = $handler->handle($dto->refreshToken);
 
         $response = $this->json(
             new SuccessResponse(
@@ -38,12 +39,32 @@ final class RefreshTokenFeature extends AbstractController
 
         $response->headers->setCookie(
             Cookie::create('access_token')
-                ->withValue($accessToken)
+                ->withValue($tokens->accessToken)
                 ->withHttpOnly()
                 ->withSecure()
                 ->withSameSite('Strict')
                 ->withPath('/')
                 ->withExpires($jwtService->getTokenExpiry('access'))
+        );
+
+        $response->headers->setCookie(
+            Cookie::create('mercureAuthorization')
+                ->withValue($tokens->mercureToken)
+                ->withHttpOnly()
+                ->withSecure()
+                ->withSameSite('Strict')
+                ->withPath('/.well-known/mercure')
+                ->withExpires($jwtService->getTokenExpiry('access'))
+        );
+
+        $response->headers->setCookie(
+            Cookie::create('refresh_token')
+                ->withValue($tokens->refreshToken)
+                ->withHttpOnly()
+                ->withSecure()
+                ->withSameSite('Strict')
+                ->withPath('/')
+                ->withExpires($jwtService->getTokenExpiry('refresh'))
         );
 
         return $response;

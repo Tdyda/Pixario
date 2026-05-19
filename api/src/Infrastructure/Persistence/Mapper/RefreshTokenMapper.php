@@ -22,6 +22,7 @@ final class RefreshTokenMapper
             token: $entity->getToken(),
             userId: $userRef->getId(),
             expiresAt: $entity->getExpiresAt(),
+            revokedAt: $entity->getRevokedAt(),
         );
     }
 

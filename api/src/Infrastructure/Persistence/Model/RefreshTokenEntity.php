@@ -23,6 +23,9 @@ class RefreshTokenEntity
     #[ORM\Column]
     private ?\DateTimeImmutable $expiresAt = null;
 
+    #[ORM\Column(name: 'revoked_at', type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $revokedAt = null;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -68,5 +71,15 @@ class RefreshTokenEntity
         $this->expiresAt = $expiresAt;
 
         return $this;
+    }
+
+    public function revoke(): void
+    {
+        $this->revokedAt = new \DateTimeImmutable('now');
+    }
+
+    public function getRevokedAt(): ?\DateTimeImmutable
+    {
+        return $this->revokedAt;
     }
 }
