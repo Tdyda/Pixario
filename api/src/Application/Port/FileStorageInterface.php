@@ -9,4 +9,6 @@ interface FileStorageInterface
     function deleteDirectory(string $directoryName): void;
 
     function deleteFile(string $fileName, string $directoryName): void;
+
+    function getImages(string $directoryName): array;
 }

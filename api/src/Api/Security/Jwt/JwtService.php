@@ -24,11 +24,11 @@ class JwtService
         $this->strategies = $strategies;
     }
 
-    public function createAccessToken(?AuthenticatedUser $user = null): string
+    public function createAccessToken(?AuthenticatedUser $user = null, ?string $galleryId = null): string
     {
         foreach ($this->strategies as $strategy) {
             if ($strategy->supports($user)) {
-                return $strategy->generateToken($user);
+                return $strategy->generateToken($user, $galleryId);
             }
         }
         throw new \RuntimeException('No strategies to generate JWT for this case.');
