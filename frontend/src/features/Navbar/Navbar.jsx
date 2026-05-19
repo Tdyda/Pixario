@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Navbar.module.css";
 import { handleLogout } from "../Gallery/helpers/logout.js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth.js";
 import { useNotifications } from "../notifications/useProcessNotifications.js";
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = useAuth();
+
+    const notificationRef = useRef(null);
 
     const [isOpen, setIsOpen] = useState(false);
     const [visibleNotifications, setVisibleNotifications] = useState([]);
+
+    const [isShareOpen, setIsShareOpen] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const {
         notifications,
@@ -18,6 +24,39 @@ const Navbar = () => {
         markAllAsRead,
         clearNotifications,
     } = useNotifications(user?.id);
+
+    const isGalleryDetailsPage =
+        location.pathname.startsWith("/gallery/") &&
+        location.pathname !== "/gallery";
+
+    const currentUrl = window.location.href;
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                notificationRef.current &&
+                !notificationRef.current.contains(event.target)
+            ) {
+                setIsOpen(false);
+                setVisibleNotifications([]);
+                clearNotifications();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen, clearNotifications]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setVisibleNotifications(notifications);
+        }
+    }, [isOpen, notifications]);
 
     const handleNotificationsClick = async () => {
         const nextOpen = !isOpen;
@@ -36,6 +75,20 @@ const Navbar = () => {
         }
     };
 
+    const handleShareClick = () => {
+        setCopied(false);
+        setIsShareOpen(true);
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(currentUrl);
+            setCopied(true);
+        } catch {
+            setCopied(false);
+        }
+    };
+
     const notificationCount = visibleNotifications.length;
 
     return (
@@ -46,7 +99,18 @@ const Navbar = () => {
             </a>
 
             <div className={styles.topbarActions}>
-                <div className={styles.notificationWrapper}>
+                {isGalleryDetailsPage && (
+                    <button
+                        className={styles.iconButton}
+                        type="button"
+                        onClick={handleShareClick}
+                        aria-label="Udostępnij galerię"
+                    >
+                        <i className="bi bi-share" />
+                    </button>
+                )}
+
+                <div className={styles.notificationWrapper} ref={notificationRef}>
                     <button
                         className={`${styles.iconButton} ${isOpen ? styles.iconButtonActive : ""}`}
                         type="button"
@@ -134,6 +198,52 @@ const Navbar = () => {
                     <i className="bi bi-box-arrow-right" />
                 </button>
             </div>
+
+            {isShareOpen && (
+                <div className={styles.shareBackdrop} role="presentation">
+                    <section
+                        className={styles.shareModal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="share-gallery-title"
+                    >
+                        <header className={styles.shareHeader}>
+                            <div>
+                                <span className={styles.shareEyebrow}>Udostępnianie</span>
+                                <h2 id="share-gallery-title">Link do galerii</h2>
+                                <p>Skopiuj link i wyślij go osobie, której chcesz udostępnić galerię.</p>
+                            </div>
+
+                            <button
+                                type="button"
+                                className={styles.shareCloseButton}
+                                onClick={() => setIsShareOpen(false)}
+                                aria-label="Zamknij okno"
+                            >
+                                <i className="bi bi-x-lg" />
+                            </button>
+                        </header>
+
+                        <div className={styles.shareBody}>
+                            <div className={styles.shareInputWrapper}>
+                                <input value={currentUrl} readOnly />
+
+                                <button type="button" onClick={handleCopyLink}>
+                                    <i className="bi bi-clipboard" />
+                                    Kopiuj
+                                </button>
+                            </div>
+
+                            {copied && (
+                                <div className={styles.shareSuccess}>
+                                    <i className="bi bi-check-circle" />
+                                    Link został skopiowany do schowka.
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                </div>
+            )}
         </header>
     );
 };
