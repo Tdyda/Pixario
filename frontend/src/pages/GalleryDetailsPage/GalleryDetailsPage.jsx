@@ -15,6 +15,7 @@ import styles from "./GalleryDetailsPage.module.css";
 import Navbar from "../../features/Navbar/Navbar.jsx";
 
 import {api} from "../../api/axios.js";
+import UploadSuccessModal from "../../features/GalleryDetails/components/UploadSuccessModal/UploadSuccessModal.jsx";
 
 const INITIAL_CREDENTIALS = {
     emailAddress: "",
@@ -33,6 +34,7 @@ const GalleryDetailsPage = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [fileError, setFileError] = useState("");
     const [uploading, setUploading] = useState(false);
+    const [uploadSuccessOpen, setUploadSuccessOpen] = useState(false);
 
     const [authRequired, setAuthRequired] = useState(false);
     const [credentials, setCredentials] = useState(INITIAL_CREDENTIALS);
@@ -240,6 +242,7 @@ const GalleryDetailsPage = () => {
             await refreshGalleryAfterUpload();
 
             closeUploadModal();
+            setUploadSuccessOpen(true);
         } catch (error) {
             console.error("Upload error:", error);
             setFileError("Nie udało się wysłać zdjęć. Spróbuj ponownie.");
@@ -339,9 +342,16 @@ const GalleryDetailsPage = () => {
                     <UploadImagesModal
                         uploading={uploading}
                         fileError={fileError}
+                        selectedFiles={selectedFiles}
                         onFileChange={handleFileChange}
                         onClose={closeUploadModal}
                         onUpload={handleUpload}
+                    />
+                )}
+
+                {uploadSuccessOpen && (
+                    <UploadSuccessModal
+                        onClose={() => setUploadSuccessOpen(false)}
                     />
                 )}
             </main>
