@@ -5,6 +5,7 @@ namespace App\Application\Feature\Account\SignIn;
 use App\Api\Http\Exception\InvalidCredentialsException;
 use App\Api\Security\Exception\AccountNotActiveException;
 use App\Api\Security\Jwt\JwtService;
+use App\Api\Security\Mercure\MercureTokenFactory;
 use App\Application\Feature\Account\RefreshToken\Create\CreateRefreshTokenHandler;
 use App\Application\Port\AuthUserProviderInterface;
 use App\Application\Port\PasswordVerifierInterface;
@@ -18,11 +19,12 @@ final readonly class SignInHandler
         private UserRepositoryInterface $userRepository,
         private PasswordVerifierInterface $passwordVerifier,
         private JwtService $jwtService,
-        private CreateRefreshTokenHandler $handler
+        private CreateRefreshTokenHandler $handler,
+        private MercureTokenFactory $mercureTokenFactory,
     ) {
     }
 
-    public function handle(SignInCommand $command): TokenPairDto
+    public function handle(SignInCommand $command): AuthTokensDto
     {
         $authUser = $this->authUserProvider->findByEmail($command->email)
             ?? throw new UserNotFoundException();
@@ -42,6 +44,8 @@ final readonly class SignInHandler
 
         $refreshToken = $this->handler->createAndPersistRefreshToken($authUser->id);
 
-        return new TokenPairDto($accessToken, $refreshToken);
+        $mercureToken = $this->mercureTokenFactory->createSubscriberToken($authUser->id);
+
+        return new AuthTokensDto($accessToken, $refreshToken, $mercureToken);
     }
 }

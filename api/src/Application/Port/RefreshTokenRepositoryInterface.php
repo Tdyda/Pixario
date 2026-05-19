@@ -11,4 +11,6 @@ interface RefreshTokenRepositoryInterface
     function save(RefreshToken $refreshToken): void;
 
     function remove(RefreshToken $refreshToken): void;
+
+    function revoke(RefreshToken $refreshToken): void;
 }

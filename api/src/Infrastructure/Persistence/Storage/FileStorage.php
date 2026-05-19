@@ -57,7 +57,6 @@ final readonly class FileStorage implements FileStorageInterface
     function deleteFile(string $fileName, string $directoryName): void
     {
         $path = $this->UPLOAD_TARGET_DIRECTORY . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . $fileName;
-        var_dump($path);
         if ($this->filesystem->exists($path)) {
             try {
                 $this->filesystem->remove($path);
@@ -65,5 +64,18 @@ final readonly class FileStorage implements FileStorageInterface
                 throw new FileException('Failed to delete file: ' . $e->getMessage(), previous: $e);
             }
         }
+    }
+
+    function getImages(string $directoryName): array
+    {
+        $dirPath = $this->UPLOAD_TARGET_DIRECTORY . DIRECTORY_SEPARATOR . $directoryName;
+
+        if (!$this->filesystem->exists($dirPath) || !is_dir($dirPath)) {
+            return [];
+        }
+
+        $files = glob($dirPath . DIRECTORY_SEPARATOR . '*.{jpg,jpeg,png,webp,gif}', GLOB_BRACE);
+
+        return array_values(array_filter($files, 'is_file'));
     }
 }

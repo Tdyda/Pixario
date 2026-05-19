@@ -1,14 +1,58 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ACCEPTED_FILE_TYPES } from "../../helpers/galleryFiles.js";
 import styles from "./UploadImagesModal.module.css";
 
 function UploadImagesModal({
                                uploading,
                                fileError,
+                               selectedFiles,
                                onFileChange,
                                onClose,
                                onUpload,
                            }) {
+    const [isDragging, setIsDragging] = useState(false);
+
+    const selectedCount = selectedFiles?.length || 0;
+    const firstFile = selectedFiles?.[0];
+
+    const previewUrl = useMemo(() => {
+        if (!firstFile || selectedCount !== 1) {
+            return null;
+        }
+
+        return URL.createObjectURL(firstFile);
+    }, [firstFile, selectedCount]);
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        setIsDragging(false);
+
+        const files = event.dataTransfer.files;
+
+        onFileChange({
+            target: {
+                files,
+            },
+        });
+    };
+
     return (
         <div className={styles.backdrop} role="presentation">
             <section
@@ -36,10 +80,43 @@ function UploadImagesModal({
                 </header>
 
                 <div className={styles.body}>
-                    <label className={styles.uploadBox}>
-                        <i className="bi bi-cloud-arrow-up" />
-                        <strong>Kliknij, aby wybrać pliki</strong>
-                        <small>Dozwolone formaty: jpg, jpeg, png</small>
+                    <label
+                        className={`${styles.uploadBox} ${
+                            isDragging ? styles.uploadBoxDragging : ""
+                        } ${selectedCount > 0 ? styles.uploadBoxSelected : ""}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                    >
+                        {selectedCount === 0 && (
+                            <>
+                                <i className="bi bi-cloud-arrow-up" />
+                                <strong>Kliknij lub przeciągnij zdjęcia tutaj</strong>
+                                <small>Dozwolone formaty: jpg, jpeg, png</small>
+                            </>
+                        )}
+
+                        {selectedCount === 1 && previewUrl && (
+                            <div className={styles.singlePreview}>
+                                <img src={previewUrl} alt="Podgląd wybranego zdjęcia" />
+
+                                <div>
+                                    <strong>Dodano 1 zdjęcie</strong>
+                                    <small>{firstFile.name}</small>
+                                </div>
+                            </div>
+                        )}
+
+                        {selectedCount > 1 && (
+                            <div className={styles.multiPreview}>
+                                <div className={styles.multiIcon}>
+                                    <i className="bi bi-images" />
+                                </div>
+
+                                <strong>Dodano {selectedCount} zdjęć</strong>
+                                <small>Pliki są gotowe do wysłania.</small>
+                            </div>
+                        )}
 
                         <input
                             type="file"
@@ -49,6 +126,12 @@ function UploadImagesModal({
                             disabled={uploading}
                         />
                     </label>
+
+                    {selectedCount > 0 && (
+                        <p className={styles.selectionHint}>
+                            Możesz kliknąć obszar ponownie, aby wybrać inne pliki.
+                        </p>
+                    )}
 
                     {fileError && (
                         <div className={styles.warning} role="alert">
@@ -72,7 +155,7 @@ function UploadImagesModal({
                         type="button"
                         className={styles.primaryButton}
                         onClick={onUpload}
-                        disabled={uploading}
+                        disabled={uploading || selectedCount === 0}
                     >
                         {uploading ? (
                             <>

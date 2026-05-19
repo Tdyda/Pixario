@@ -16,6 +16,7 @@ final readonly class SignUpHandler
         private UserRepositoryInterface $userRepository,
         private MailerPort $mailer,
         private ActivationMailBuilder $activationMailBuilder,
+        private string $appDomain
     ) {
     }
 
@@ -36,7 +37,7 @@ final readonly class SignUpHandler
         $this->userRepository->save($user, $command->plainPassword);
 
         $activationUrl = sprintf(
-            'https://pixario.pl/activate-account?token=%s',
+            $this->appDomain . '/activate-account?token=%s',
             $activationToken
         );
 

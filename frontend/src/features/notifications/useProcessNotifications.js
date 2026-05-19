@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axios.js";
 
+const VITE_MERCURE_DOMAIN = import.meta.env.VITE_MERCURE_DOMAIN;
 export function useNotifications(userId) {
     const [notifications, setNotifications] = useState([]);
 
@@ -8,6 +9,7 @@ export function useNotifications(userId) {
         if (!userId) return;
 
         api
+
             .get("/notifications")
             .then((response) => {
                 setNotifications(response.data);
@@ -21,7 +23,8 @@ export function useNotifications(userId) {
         const topic = encodeURIComponent(`/users/${userId}/notifications`);
 
         const eventSource = new EventSource(
-            `https://pixario.pl/.well-known/mercure?topic=${topic}`
+            `${VITE_MERCURE_DOMAIN}/.well-known/mercure?topic=${topic}`,
+            { withCredentials: true }
         );
 
         eventSource.onmessage = (event) => {

@@ -18,7 +18,7 @@ class UserJwtStrategy implements JwtStrategyInterface
         return $user !== null;
     }
 
-    public function generateToken(?AuthenticatedUser $user = null): string
+    public function generateToken(?AuthenticatedUser $user = null, ?string $galleryId = null): string
     {
         if (!$user) {
             throw new \LogicException('UserJwtStrategy wymaga obiektu UserEntity.');

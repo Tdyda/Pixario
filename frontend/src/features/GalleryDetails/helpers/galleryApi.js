@@ -1,7 +1,5 @@
 import {api} from "../../../api/axios.js";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export async function fetchJson(path, options = {}) {
     try {
         const response = await api.get(path, options);

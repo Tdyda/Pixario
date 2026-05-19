@@ -19,6 +19,7 @@ import {useNotifications} from "./features/notifications/useProcessNotifications
 import ActivateAccountPage from "./pages/ActivateAccountPage/ActivateAccountPage.jsx";
 import RecoverPasswordPage from "./pages/RecoverPasswordPage/RecoverPasswordPage.jsx";
 import RecoverTokenPage from "./pages/RecoverTokenPage/RecoverTokenPage.jsx";
+import HomeRedirect from "./auth/HomeRedirect.jsx";
 
 export default function App() {
     const { user, logout } = useAuth();
@@ -39,7 +40,8 @@ export default function App() {
             <Route path="/recover-password" element={<RecoverPasswordPage />} />
             <Route path="/recover-token" element={<RecoverTokenPage />} />
 
-            <Route path="/" element={<WelcomePage />} />
+            <Route path="/" element={<HomeRedirect />} />
+            <Route path="/welcome" element={<WelcomePage />} />
 
             {/* Strony błędów */}
             <Route path="/401" element={<UnauthorizedPage />} />

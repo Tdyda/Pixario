@@ -16,16 +16,16 @@ class RecoverTokenEntity
     public function __construct(
         #[ORM\ManyToOne(targetEntity: UserEntity::class)]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-        private UserEntity $userRef,
+        private readonly UserEntity $userRef,
 
         #[ORM\Column(type: 'string', length: 255, unique: true)]
-        private string $tokenHash,
+        private readonly string $tokenHash,
 
         #[ORM\Column(type: 'datetime_immutable')]
-        private DateTimeImmutable $expiresAt,
+        private readonly DateTimeImmutable $expiresAt,
 
         #[ORM\Column(type: 'datetime_immutable')]
-        private DateTimeImmutable $createdAt,
+        private readonly DateTimeImmutable $createdAt,
 
         #[ORM\Column(type: 'datetime_immutable', nullable: true)]
         private ?DateTimeImmutable $usedAt = null
@@ -60,5 +60,10 @@ class RecoverTokenEntity
     public function getUsedAt(): ?DateTimeImmutable
     {
         return $this->usedAt;
+    }
+
+    public function setUsedAt(DateTimeImmutable $usedAt): void
+    {
+        $this->usedAt = $usedAt;
     }
 }

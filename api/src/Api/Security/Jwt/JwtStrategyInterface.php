@@ -8,5 +8,5 @@ interface JwtStrategyInterface
 {
     public function supports(?AuthenticatedUser $user): bool;
 
-    public function generateToken(?AuthenticatedUser $user = null): string;
+    public function generateToken(?AuthenticatedUser $user = null, ?string $galleryId = null): string;
 }

@@ -14,6 +14,22 @@ function RecoverPasswordPage() {
 
     const token = searchParams.get("token");
 
+    const getRecoverPasswordErrorMessage = (status, message) => {
+        switch (status) {
+            case 404:
+                return "Link do zmiany hasła jest nieprawidłowy.";
+
+            case 410:
+                return "Link do zmiany hasła wygasł. Wygeneruj nowy link.";
+
+            case 409:
+                return "Ten link został już wykorzystany. Wygeneruj nowy link, jeśli nadal chcesz zmienić hasło.";
+
+            default:
+                return message || "Nie udało się zmienić hasła.";
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -56,6 +72,11 @@ function RecoverPasswordPage() {
                 }
             );
 
+            if (response.status >= 500) {
+                navigate("/500", { replace: true });
+                return;
+            }
+
             if (!response.ok) {
                 let message = "Nie udało się zmienić hasła.";
 
@@ -71,7 +92,7 @@ function RecoverPasswordPage() {
                     return;
                 }
 
-                throw new Error(message);
+                throw new Error(getRecoverPasswordErrorMessage(response.status, message));
             }
 
             setSuccess(true);
@@ -103,7 +124,7 @@ function RecoverPasswordPage() {
                         Możesz teraz zalogować się do Pixario używając nowego hasła.
                     </p>
 
-                    <Link to="/auth" className={styles.primaryButton}>
+                    <Link to="/auth/login" className={styles.primaryButton}>
                         Przejdź do logowania
                     </Link>
                 </section>

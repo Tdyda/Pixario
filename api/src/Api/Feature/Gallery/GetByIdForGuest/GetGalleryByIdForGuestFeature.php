@@ -34,7 +34,7 @@ final class GetGalleryByIdForGuestFeature extends AbstractController
         );
 
         $result = $handler->handle($command);
-        $token = $jwtService->createAccessToken();
+        $token = $jwtService->createAccessToken(null, $command->id);
         $response = new JsonResponse(
             $result,
             Response::HTTP_OK

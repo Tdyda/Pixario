@@ -19,12 +19,17 @@ class AnonymousJwtStrategy implements JwtStrategyInterface
         return $user === null;
     }
 
-    public function generateToken(?AuthenticatedUser $user = null): string
+    public function generateToken(?AuthenticatedUser $user = null, ?string $galleryId = null): string
     {
+        if (!$galleryId) {
+            throw new \LogicException('AnonymousUser wymaga powiązania z galleryId.');
+        }
+
         $payload = [
             'type' => 'anonymous',
             'iat' => time(),
             'exp' => time() + $this->accessTtl,
+            'galleryId' => $galleryId,
         ];
 
         return JWT::encode($payload, $this->jwtSecret, 'HS256');

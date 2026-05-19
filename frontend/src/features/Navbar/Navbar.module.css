@@ -249,6 +249,116 @@
     line-height: 1.55;
 }
 
+.shareBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    padding: 24px;
+    background: rgba(13, 7, 33, 0.58);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shareModal {
+    width: min(100%, 520px);
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+}
+
+.shareHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 28px 28px 18px;
+}
+
+.shareEyebrow {
+    display: inline-flex;
+    margin-bottom: 10px;
+    color: #6f35e8;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.shareHeader h2 {
+    margin: 0;
+    color: #17122b;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.shareHeader p {
+    margin: 8px 0 0;
+    color: #7a728c;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.shareCloseButton {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 13px;
+    background: #f3effb;
+    color: #2f2850;
+}
+
+.shareBody {
+    padding: 0 28px 28px;
+}
+
+.shareInputWrapper {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 16px;
+    background: #fbfaff;
+    border: 1px solid #eee8f7;
+}
+
+.shareInputWrapper input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: #17122b;
+    font-size: 14px;
+    outline: none;
+}
+
+.shareInputWrapper button {
+    border: 0;
+    border-radius: 10px;
+    padding: 0 14px;
+    min-height: 40px;
+    background: linear-gradient(180deg, #8d55ff, #6228db);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.shareSuccess {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #e8fff1;
+    color: #0d8a4b;
+    font-size: 14px;
+    font-weight: 700;
+}
+
 @media (max-width: 768px) {
     .topbar {
         gap: 16px;
@@ -273,5 +383,13 @@
 
     .notificationList {
         max-height: calc(100vh - 230px);
+    }
+    .shareInputWrapper {
+        flex-direction: column;
+    }
+
+    .shareInputWrapper button {
+        width: 100%;
+        justify-content: center;
     }
 }

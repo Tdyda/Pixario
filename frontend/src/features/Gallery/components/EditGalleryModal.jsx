@@ -87,12 +87,9 @@ function EditGalleryModal({ gallery, onClose, onImagesDeleted }) {
                 },
             });
 
-            setImages((prev) =>
-                prev.filter((image) => !selectedImageIds.includes(image.id))
-            );
-
             setSelectedImageIds([]);
 
+            await fetchGalleryImages();
             await onImagesDeleted?.();
         } catch (error) {
             console.error("Nie udało się usunąć zdjęć:", error);

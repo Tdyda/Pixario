@@ -18,6 +18,8 @@ Thumbs.db
 # Env files
 .env.local
 .env.*.local
+.env.*
+.env
 
 # =========================
 # SYMFONY (api/)

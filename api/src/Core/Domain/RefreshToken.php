@@ -9,6 +9,7 @@ final readonly class RefreshToken
         private string $token,
         private string $userId,
         private \DateTimeImmutable $expiresAt,
+        private ?\DateTimeImmutable $revokedAt,
     ) {
     }
 
@@ -17,8 +18,9 @@ final readonly class RefreshToken
         string $token,
         string $userId,
         \DateTimeImmutable $expiresAt,
+        \DateTimeImmutable $revokedAt = null,
     ): self {
-        return new self($id, $token, $userId, $expiresAt);
+        return new self($id, $token, $userId, $expiresAt, $revokedAt);
     }
 
     public function getId(): string
@@ -39,5 +41,10 @@ final readonly class RefreshToken
     public function getExpiresAt(): \DateTimeImmutable
     {
         return $this->expiresAt;
+    }
+
+    public function getRevokedAt(): ?\DateTimeImmutable
+    {
+        return $this->revokedAt;
     }
 }

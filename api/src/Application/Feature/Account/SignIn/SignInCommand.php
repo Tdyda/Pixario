@@ -2,7 +2,7 @@
 
 namespace App\Application\Feature\Account\SignIn;
 
-use App\Api\Feature\Account\UI\Assert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SignInCommand
 {
