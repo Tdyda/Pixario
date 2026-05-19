@@ -1,20 +1,20 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, {useCallback, useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
 
-import { getAuth } from "../../auth/GetAuth.js";
+import {getAuth} from "../../auth/GetAuth.js";
 
 import CredentialsForm from "../../features/GalleryDetails/components/CredentialsForm/CredentialsForm.jsx";
 import GalleryPhotoGrid from "../../features/GalleryDetails/components/GalleryPhotoGrid/GalleryPhotoGrid.jsx";
 import UploadImagesModal from "../../features/GalleryDetails/components/UploadImagesModal/UploadImagesModal.jsx";
 import LoadingSpinner from "../../features/GalleryDetails/components/LoadingSpinner.jsx";
 
-import { fetchJson, uploadGalleryImages } from "../../features/GalleryDetails/helpers/galleryApi.js";
-import { getImageNames, isAllowedFile } from "../../features/GalleryDetails/helpers/galleryFiles.js";
+import {fetchJson, uploadGalleryImages} from "../../features/GalleryDetails/helpers/galleryApi.js";
+import {getImageNames, isAllowedFile} from "../../features/GalleryDetails/helpers/galleryFiles.js";
 
 import styles from "./GalleryDetailsPage.module.css";
 import Navbar from "../../features/Navbar/Navbar.jsx";
 
-import { api } from "../../api/axios.js";
+import {api} from "../../api/axios.js";
 
 const INITIAL_CREDENTIALS = {
     emailAddress: "",
@@ -22,7 +22,7 @@ const INITIAL_CREDENTIALS = {
 };
 
 const GalleryDetailsPage = () => {
-    const { dir } = useParams();
+    const {dir} = useParams();
 
     const [galleryName, setGalleryName] = useState("");
     const [photoNames, setPhotoNames] = useState([]);
@@ -97,7 +97,7 @@ const GalleryDetailsPage = () => {
     }, [fetchGalleryAsOwner]);
 
     const handleCredentialsChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
 
         setCredentials((prev) => ({
             ...prev,
@@ -108,7 +108,7 @@ const GalleryDetailsPage = () => {
     const handleCredentialsSubmit = async (event) => {
         event.preventDefault();
 
-        const { emailAddress, password } = credentials;
+        const {emailAddress, password} = credentials;
 
         if (!emailAddress.trim() || !password.trim()) {
             setCredentialsError("Podaj adres e-mail i hasło.");
@@ -134,6 +134,38 @@ const GalleryDetailsPage = () => {
             }
         } finally {
             setCredentialsLoading(false);
+        }
+    };
+
+    const handleDownloadGallery = async () => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL}/gallery/${dir}/download`,
+                {
+                    method: "GET",
+                    credentials: "include",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Nie udało się pobrać galerii.");
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${galleryName || "gallery"}.zip`;
+
+            document.body.appendChild(link);
+            link.click();
+
+            link.remove();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error(error);
+            setError("Nie udało się pobrać galerii.");
         }
     };
 
@@ -220,12 +252,12 @@ const GalleryDetailsPage = () => {
         <div className={styles.shell}>
 
             <main className={styles.main}>
-                {auth && (<Navbar />)}
-                {loading && <LoadingSpinner />}
+                {auth && (<Navbar/>)}
+                {loading && <LoadingSpinner/>}
 
                 {error && !loading && (
                     <div className={styles.stateCard} role="alert">
-                        <i className="bi bi-exclamation-octagon" />
+                        <i className="bi bi-exclamation-octagon"/>
                         <h3>Nie udało się pobrać galerii</h3>
                         <p>{error}</p>
                     </div>
@@ -245,20 +277,33 @@ const GalleryDetailsPage = () => {
                     <>
                         <header className={styles.topbar}>
                             <Link to="/gallery" className={styles.backLink}>
-                                <i className="bi bi-arrow-left" />
+                                <i className="bi bi-arrow-left"/>
                                 Wróć do galerii
                             </Link>
 
-                            {canUpload && (
+                            <div className={styles.galleryActions}>
+                                {canUpload && (
+                                    <button
+                                        type="button"
+                                        className={styles.primaryButton}
+                                        onClick={openUploadModal}
+                                    >
+                                        <i className="bi bi-plus-lg"/>
+                                        Dodaj zdjęcia
+                                    </button>
+                                )}
+
                                 <button
                                     type="button"
-                                    className={styles.primaryButton}
-                                    onClick={openUploadModal}
+                                    className={styles.secondaryButton}
+                                    onClick={handleDownloadGallery}
+                                    disabled={photoNames.length === 0}
                                 >
-                                    <i className="bi bi-plus-lg" />
-                                    Dodaj zdjęcia
+                                    <i className="bi bi-download"/>
+                                    Pobierz galerię
                                 </button>
-                            )}
+                            </div>
+
                         </header>
 
                         <section className={styles.hero}>
@@ -286,7 +331,7 @@ const GalleryDetailsPage = () => {
                             </div>
                         </section>
 
-                        <GalleryPhotoGrid photoNames={photoNames} />
+                        <GalleryPhotoGrid photoNames={photoNames}/>
                     </>
                 )}
 

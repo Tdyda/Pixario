@@ -18,6 +18,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 26px;
+    gap: 16px;
 }
 
 .backLink {
@@ -188,6 +189,33 @@
     font-size: 42px;
 }
 
+.secondaryButton {
+    min-height: 44px;
+    border: 0;
+    border-radius: 9px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f3effb;
+    color: #4d357a;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.secondaryButton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.galleryActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
 @media (max-width: 768px) {
     .shell {
         display: block;
@@ -215,5 +243,14 @@
     .heroStats {
         width: 100%;
         margin-top: 24px;
+    }
+
+    .galleryActions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .galleryActions button {
+        width: 100%;
     }
 }
