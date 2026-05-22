@@ -18,7 +18,8 @@ Thumbs.db
 # Env files
 .env.local
 .env.*.local
-.env.*
+.env.prod
+.env.dev
 .env
 
 # =========================
